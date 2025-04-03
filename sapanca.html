@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rezervasyon Detayları</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            margin: auto;
+        }
+        h2 {
+            color: #333;
+        }
+        .info {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            background: #ff6600;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #e65c00;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .tour-images img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .location-info {
+            margin-bottom: 20px;
+        }
+        .copy-btn {
+            background: #ddd;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .copy-btn:hover {
+            background: #ccc;
+        }
+        .black-text {
+            color: black;
+        }
+
+        
+
+
+
+/* Genel stil ayarları */
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Sticky header */
+        .sticky {
+    position: fixed; /* Sayfa yukarıda sabit kalsın */
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: #ffffff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    transition: top 0.3s ease; /* Animasyon efekti */
+}
+
+        /* Logo kısmı */
+        .sticky .logo {
+            font-size: 25px;
+            color: #000000;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .sticky .logo span {
+            font-size:25px;
+            color: #D4B36A; /* Turuncu renk */
+            margin-left: 5px;
+        }
+
+        /* Navbar listesi */
+        .navbar {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar li {
+            display: inline-block;
+        }
+
+        .navbar li a {
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Navbar link hover efekti */
+        .navbar li a:hover {
+            background-color: #f2a900; /* Turuncu arka plan */
+            border-radius: 5px;
+        }
+
+        /* Müşteri hizmetleri linki */
+        .musterihizmet {
+            color: rgb(0, 0, 0);
+            font-weight: bold;
+        }
+
+        .musterihizmet:hover {
+            background-color: #f2a900;
+            border-radius: 5px;
+        }
+
+        /* Hamburger menü ikonu */
+        .menu-icon {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        
+        }
+
+        .menu-icon div {
+            width: 25px;
+            height: 3px;
+            background-color: rgb(0, 0, 0);
+            border-radius: 5px;
+           
+        }
+
+        /* Mobil uyumlu header */
+        @media (max-width: 768px) {
+            .sticky {
+        flex-direction: row; /* Satır düzeninde tut */
+        align-items: center;
+    }
+
+    .navbar {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 100%;
+        background-color: #ffffff;
+    }
+    .navbar.open {
+        display: flex;
+    }
+
+            .navbar li {
+                width: 100%;
+                text-align: center;
+                background-color: #ff6600;
+            }
+
+            .navbar li a {
+                padding: 15px;
+            }
+
+            /* Hamburger menü ikonu görünür hale gelir */
+            .menu-icon {
+        display: flex;
+        margin-left: auto; /* Sağa yasla */
+    }
+
+            /* Açık menü */
+            .navbar.open {
+                display: flex;
+            }
+        }
+
+
+
+    </style>
+    
+    <script>
+        // Başlangıç fiyatı
+        var basePrice = 450.00;
+
+        function updatePrice() {
+            var duration = document.getElementById("duration").value;
+            if (duration > 1) {
+                // Tur süresi 1 günden fazla ise fiyatı %25 arttır
+                var newPrice = basePrice * Math.pow(1.25, (duration - 1));
+                document.getElementById("price").textContent = newPrice.toFixed(2) + " $";
+            } else {
+                // Eğer 1 günse fiyat sabit kalır
+                document.getElementById("price").textContent = basePrice.toFixed(2) + " $";
+            }
+        }
+
+        function sendEmail() {
+            var passengerName = document.getElementById("passenger-name").value;
+            var phoneNumber = document.getElementById("phone-number").value;
+            var route = document.getElementById("route").textContent;
+            var price = document.getElementById("price").textContent;
+            var duration = document.getElementById("duration").value;
+            var persons = document.getElementById("persons").value;
+            var departureDate = document.getElementById("departure-date").value; // Gidilecek tarih
+            var emailBody = "Yolcu Bilgileri:%0D%0A" +
+                        "Ad Soyad: " + passengerName + "%0D%0A" +
+                        "Telefon: " + phoneNumber + "%0D%0A" +
+                        "Rota: " + route + "%0D%0A" +
+                        "Fiyat: " + price + "%0D%0A" +
+                        "Tur Süresi: " + duration + " gün %0D%0A" +
+                        "Kişi Sayısı: " + persons + "%0D%0A" +
+                        "Gidiş Tarihi: " + departureDate + "%0D%0A"; // Tarih bilgisi eklendi
+        
+        window.location.href = "mailto:okanakaslan51@icloud.com?subject=Rezervasyon Bilgileri&body=" + emailBody;
+    }
+
+        // IBAN Kopyalama Fonksiyonu
+        function copyIBAN() {
+            var copyText = document.getElementById("iban");
+            copyText.select();
+            document.execCommand("copy");
+            alert("IBAN kopyalandı: " + copyText.value);
+        }
+    </script>
+</head>
+
+<body>
+
+    <br><br><br><br><br>
+    <bbody>
+        <header class="sticky">
+            <img src="resim/logoooo.jpg" height="90" alt="AKASLAN Logo">
+            <a href="#" onclick="window.location.href='index.html'" class="logo">AKASLAN<span>TURİZM</span></a>
+    
+            <!-- Hamburger Menü İkonu -->
+            <div class="menu-icon" onclick="toggleMenu()">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+    
+            <!-- Navbar -->
+            <ul class="navbar">
+                <li><a href="#" onclick="window.location.href='Servisler.html'">Servisler</a></li>
+                <li><a href="#" onclick="window.location.href='hakkımızda.html'">Hakkımızda</a></li>
+                <li><a href="tel:+90 5354940385">İletişim</a></li>
+            </ul>
+        </header>
+    
+        <script>
+            
+        let lastScrollTop = 0;
+        const header = document.querySelector(".sticky");
+    
+        window.addEventListener("scroll", function() {
+            let scrollTop = window.scrollY || document.documentElement.scrollTop;
+    
+            if (scrollTop > lastScrollTop) {
+                // Aşağı kaydırıyorsa menüyü gizle
+                header.style.top = "-100px"; 
+            } else {
+                // Yukarı kaydırıyorsa menüyü göster
+                header.style.top = "0"; 
+            }
+    
+            lastScrollTop = scrollTop;
+        });
+    
+            // Menü açma ve kapama fonksiyonu
+            function toggleMenu() {
+                const navbar = document.querySelector('.navbar');
+                navbar.classList.toggle('open');
+            }
+        </script>
+    </bbody>
+
+    <div class="container">
+        <h2>Rezervasyon Detayları</h2>
+
+        <!-- Tur Bilgileri -->
+        <div class="info">
+            <strong>Tur Bilgileri:</strong>
+            <p>İstanbul'dan bu rehberli günlük turda Sapanca ve Maşukiye'nin şelalelerinin, göllerinin ve ormanlarının doğal güzelliğini keşfedin. </p>
+        </div>
+
+        <!-- Kapadokya Lokasyonu -->
+        <div class="location-info">
+            <h3>Sapanca</h3>
+            <img src="resim/sapanca.jpg" alt="Sapanca" />
+            <img src="resim/68b97717-6d95-4033-92b6-d71c4cbe8f9a.jpg" height="194" alt="">
+            <img src="resim/fdcc8782-a064-4746-a516-cf48fabfcc74.jpg" height="194" alt="">
+            <p>Hem kültürel hem tarihi hem doğal bir rota arayanlar için Sapanca gezisi uygun fiyatlarla sizi bekliyor.</p>
+        </div>
+
+        <!-- Fiyat ve Rota -->
+        <div class="info">
+            <strong>Fiyat:</strong> <span id="price">450,00 $</span>
+        </div>
+        <div class="info">
+            <strong>Nereden - Nereye:</strong> <span id="route">İstanbul → Sapanca</span>
+        </div>
+
+        <!-- Tur Süresi ve Kişi Sayısı -->
+        <div class="info">
+            <label for="duration">Tur Süresi (Gün):</label>
+            <input type="number" id="duration" placeholder="Kaç gün sürecek?" required min="1" max="10" onchange="updatePrice()">
+        </div>
+        <div class="info">
+            <label for="persons">Kişi Sayısı (0-6):</label>
+            <input type="number" id="persons" min="0" max="6" placeholder="Kaç kişi?" required>
+        </div>
+
+        <!-- Gidiş Tarihi -->
+        <div class="info">
+            <label for="departure-date">Gidiş Tarihi:</label>
+            <input type="date" id="departure-date" required>
+        </div>
+
+        <!-- Yolcu Detayları -->
+        <div class="info">
+            <strong>Yolcu Detayları:</strong>
+            <label for="passenger-name">Ad Soyad:</label>
+            <input type="text" id="passenger-name" placeholder="Adınızı giriniz" required>
+            <label for="phone-number">Telefon Numarası:</label>
+            <input type="text" id="phone-number" placeholder="Telefon numaranızı giriniz" required>
+        </div>
+
+        <!-- Ödeme Bilgisi -->
+        <div class="info">
+            <strong>Ödeme Bilgisi:</strong>
+            <p>Ödeme Hesabı: <input type="text" id="iban" value="IBAN TR84 0011 1000 0000 0150 0177 41" readonly /></p>
+            <p><strong>Alıcı:</strong> <span class="black-text">Okan Akaslan</span></p>
+            <button class="copy-btn" onclick="copyIBAN()">IBAN'ı Kopyala</button>
+        </div>
+
+        <!-- Ödeme Tamamla -->
+        <button class="btn" onclick="sendEmail()">Ödemeyi Tamamla ve Mail Gönder</button>
+    </div>
+</body>
+</html>

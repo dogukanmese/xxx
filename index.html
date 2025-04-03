@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6XFSBo5ZO2hi2f8BjDwjmsT8PeOVQTGU&libraries=places"></script>
+      <!---boxicons link-->
+      <link rel="stylesheet"
+      href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+  
+      <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"/>
+  
+         <!---google fonts link-->
+  
+         <link rel="preconnect" href="https://fonts.googleapis.com">
+         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+         <link href="https://fonts.googleapis.com/css2?
+         family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+    <title>Günübirlik Turlar & Popüler Lokasyonlar</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        
+        :root{/* Genel Ayarlar */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        overflow-x: hidden; /* Yatay kaydırma engelleniyor */
+    }
+    
+
+    
+   
+    
+    
+    /* Footer'ın alt kısımdan doğru şekilde görünmesini sağlar */
+    footer {
+        position: relative;
+        margin-top: auto; /* Footer, sayfa altına itilir */
+    }
+    
+    --text-color:#000000;
+    --bg-color:#ffffff;
+    --main-color:#ffa343;   
+
+    --h1-font: 6rem;
+    --h2-font:3rem;
+    --p-font: 1rem;
+}
+
+
+
+        /* Üst Menü */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #343a40;
+            padding: 10px 20px;
+            color: white;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        .logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+        .logo h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .nav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+        .nav li {
+            display: inline;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Anasayfa Başlık ve Arka Plan (Resim yerine renkli arka plan) */
+        .home {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    background-color: white; /* Arka plan beyaz */
+    background-image: linear-gradient(to left, rgba(149, 137, 137, 0.6), rgba(0, 0, 0, 0.6)),
+                      url(resim/arka.jpg);
+    background-size: cover; /* Resim ekranı kaplasın */
+    background-position: center center; /* Resmin ortalanmasını sağlar */
+    background-repeat: no-repeat; /* Resmin tekrar etmesini engeller */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+
+
+
+.home-text h5{
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    color: var(--main-color);
+}
+.home-text h1{
+    font-size: var(--h2-font);
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: var(--bg-color);
+}
+
+
+.home-text p{
+    font-size: var(--p-font);
+    font-weight: 500;
+    line-height: 30px;
+    color: #ffffff;
+    margin-bottom: 35px;
+}
+.btn{
+    display: inline-block;
+    padding: 13px 40px;
+    background: var(--main-color);
+    color: var(--bg-color);
+    font-size: 15px;
+    font-weight: 600;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    transition: all .50s ease;
+    cursor: pointer;
+}
+
+        /* Sayfa İçeriği */
+         
+
+
+
+
+
+
+
+
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .feature-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .row {
+            text-align: center;
+        }
+        .row img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .row img:hover {
+            transform: scale(1.1);
+        }
+        .locations {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .location {
+            padding: 15px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .location p {
+            margin: 5px 0;
+        }
+        .reserve-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #ff6600;
+            color: white;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .reserve-btn:hover {
+            background: #cc5200;
+        }
+        @media (max-width: 768px) {
+            .feature-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            .row img {
+                width: 120px;
+                height: 120px;
+            }
+            .locations {
+                grid-template-columns: 1fr;
+            }
+            .nav {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+        }
+
+
+
+
+
+
+
+        
+        /* Yeni eklenen İstanbul turu için stil */
+        .istanbul-tour {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .istanbul-tour img {
+            width: 200px;
+            height: 200px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        .istanbul-tour .text {
+            max-width: 600px;
+        }
+        .istanbul-tour h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .istanbul-tour p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .istanbul-tour .reserve-btn {
+            width: auto;
+            background-color: #ffa343;
+        }
+
+        .footer{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, auto));
+    gap: 2rem;
+}          
+.footer-box{
+    display: flex;
+    flex-direction: column;
+} 
+.footer-box h3{
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+.footer-box a{
+    color: #979797;
+    margin-bottom: 0.8rem;
+    transition: all .50s ease;
+}   
+.footer-box a:hover{
+    transform: translateX(-5px);
+    color: var(--text-color);
+}
+.social a{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+    width: 45px;
+    background: #706d6d;
+    color: var(--text-color);
+    font-size: 20px;
+    border-radius: 50%;
+    margin-right: 8px;
+    transition: transform 0.6s;
+}
+.social a:hover{
+    background: var(--main-color);
+    color: var(--bg-color);
+    transform: translateX(-4px);
+}
+
+.copyright p{
+    text-align: center;
+    padding: 20px;
+    color: #979797;
+    font-size: 15px;
+}
+
+
+
+
+
+ /* Genel stil ayarları */
+ * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Sticky header */
+        .sticky {
+    position: fixed; /* Sayfa yukarıda sabit kalsın */
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: #ffffff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    transition: top 0.3s ease; /* Animasyon efekti */
+}
+
+        /* Logo kısmı */
+        .sticky .logo {
+            font-size: 25px;
+            color: #000000;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .sticky .logo span {
+            font-size:25px;
+            color: #D4B36A; /* Turuncu renk */
+            margin-left: 5px;
+        }
+
+        /* Navbar listesi */
+        .navbar {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar li {
+            display: inline-block;
+        }
+
+        .navbar li a {
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Navbar link hover efekti */
+        .navbar li a:hover {
+            background-color: #f2a900; /* Turuncu arka plan */
+            border-radius: 5px;
+        }
+
+        /* Müşteri hizmetleri linki */
+        .musterihizmet {
+            color: rgb(0, 0, 0);
+            font-weight: bold;
+        }
+
+        .musterihizmet:hover {
+            background-color: #f2a900;
+            border-radius: 5px;
+        }
+
+        /* Hamburger menü ikonu */
+        .menu-icon {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        
+        }
+
+        .menu-icon div {
+            width: 25px;
+            height: 3px;
+            background-color: rgb(0, 0, 0);
+            border-radius: 5px;
+           
+        }
+
+        /* Mobil uyumlu header */
+        @media (max-width: 768px) {
+            .sticky {
+        flex-direction: row; /* Satır düzeninde tut */
+        align-items: center;
+    }
+
+    .navbar {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 100%;
+        background-color: #ffffff;
+    }
+    .navbar.open {
+        display: flex;
+    }
+
+            .navbar li {
+                width: 100%;
+                text-align: center;
+                background-color: #ff6600;
+            }
+
+            .navbar li a {
+                padding: 15px;
+            }
+
+            /* Hamburger menü ikonu görünür hale gelir */
+            .menu-icon {
+        display: flex;
+        margin-left: auto; /* Sağa yasla */
+    }
+
+            /* Açık menü */
+            .navbar.open {
+                display: flex;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bodyy {
+            background-color: #ffffff;
+            color: rgb(115, 49, 49);
+        }
+
+        
+        /* ARAÇ LİSTESİ */
+        .fleet {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .vehicle {
+            background: #ffffff;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.822);
+            width: 200px;
+            text-align: center;
+        }
+
+        .vehicle img {
+    width: 100%;
+    height: 200px; /* Sabit yükseklik */
+    object-fit: cover; /* Resimleri kesmeden sığdırır */
+    border-radius: 10px;
+}
+
+
+        .vehicle h2 {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+
+        .vehicle p {
+            font-size: 16px;
+            color: #000000;
+        }
+
+        .reserve-btn {
+            background-color: #ff6600;
+            color: rgb(0, 0, 0);
+            border: none;
+            padding: 10px;
+            width: 100%;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .reserve-btn:hover {
+            background-color: #cc5200;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+     
+        h7 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .ccontainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .image-box {
+            width: 150px;
+            height: 200px; /* Yüksekliği biraz artırdık ki alt kısmı için yer kalsın */
+            border: 2px solid #333;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Resim ve alt kısmı ayırmak için */
+            align-items: center; /* İçeriği ortalamak için */
+        }
+
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Resmin kutucuğa tam oturmasını sağlıyoruz */
+        }
+
+        .image-box .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Yarı saydam arka plan */
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Alt kısmı düzenlemek için */
+        .contact-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .contact-section a {
+            text-decoration: none;
+            color: #d39c25; /* WhatsApp rengi */
+            font-weight: bold;
+            margin: 5px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .contact-section a:hover {
+            color: #128C7E; /* WhatsApp yeşil rengi */
+        }
+
+        .whatsapp-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+
+
+
+
+
+
+
+
+
+
+<bbody>
+    <header class="sticky">
+        <img src="resim/logoooo.jpg" height="90" alt="AKASLAN Logo">
+        <a href="#" class="logo">AKASLAN<span>TURİZM</span></a>
+
+        <!-- Hamburger Menü İkonu -->
+        <div class="menu-icon" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <!-- Navbar -->
+        <ul class="navbar">
+            <li><a href="#" onclick="window.location.href='Servisler.html'">Servisler</a></li>
+            <li><a href="#" onclick="window.location.href='hakkımızda.html'">Hakkımızda</a></li>
+            <li><a href="tel:+90 5354940385">İletişim</a></li>
+        </ul>
+    </header>
+
+    <script>
+        
+    let lastScrollTop = 0;
+    const header = document.querySelector(".sticky");
+
+    window.addEventListener("scroll", function() {
+        let scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+        if (scrollTop > lastScrollTop) {
+            // Aşağı kaydırıyorsa menüyü gizle
+            header.style.top = "-100px"; 
+        } else {
+            // Yukarı kaydırıyorsa menüyü göster
+            header.style.top = "0"; 
+        }
+
+        lastScrollTop = scrollTop;
+    });
+
+        // Menü açma ve kapama fonksiyonu
+        function toggleMenu() {
+            const navbar = document.querySelector('.navbar');
+            navbar.classList.toggle('open');
+        }
+    </script>
+</bbody>
+<body>
+
+    
+
+ 
+    
+        
+    </header>
+    <!-- Anasayfa Hero Section (Renkli arka plan) -->
+    <section class="home">
+        
+        <div class="home-text">
+            <h5>En İyi Fiyat Garantisi</h5>
+            <h1>Memnuniyetiniz Önceliğimizdir! </h1>
+            <p>İster iş seyahatlerinizde ister turistik gezilerinizde
+                 deneyimli şoförlerimiz eşliğinde dilediğiniz noktadan dilediğiniz noktaya özel transfer
+                 hizmeti sunuyoruz. Yolculuğunuzun her anında konforunuzu ve güvenliğinizi sağlamak için buradayız.</p>
+                 
+       
+            
+          
+        </div>
+
+        
+    </section>
+  
+
+
+
+
+    <bodyy>
+        <!-- Araç Listesi -->
+        <h2>Araçlar</h2>
+        <section class="fleet">
+            
+            <div class="vehicle">
+                <img src="resim/ecovan.jpg" alt="Mercedes S-Class">
+                <h2>ECO Van</h2>
+                <p>9 kişilik geniş araç</p>
+                <button class="reserve-btn" onclick="window.location.href='ödeme.html'">Rezervasyon Yap</button>
+            </div>
+    
+            <div class="vehicle">
+                <img src="resim/ecovip.jpg" alt="BMW 7 Serisi">
+                <h2>Eco VIP</h2>
+                <p>9 kişilik geniş araç</p>
+                <button class="reserve-btn"  onclick="window.location.href='ödeme1.html'">Rezervasyon Yap</button>
+            </div>
+    
+            <div class="vehicle">
+                <img src="resim/ultra.jpg" alt="VIP Minibüs">
+                <h2>Ultra VIP</h2>
+                <p>9 kişilik geniş araç</p>
+                <button class="reserve-btn"  onclick="window.location.href='ödeme2.html'">Rezervasyon Yap</button>
+            </div>
+    
+            <div class="vehicle">
+                <img src="resim/sprın.jpg" alt="Range Rover">
+                <h2>Sprinter</h2>
+                <p>16 kişilik geniş araç</p>
+                <button class="reserve-btn"  onclick="window.location.href='ödeme3.html'">Rezervasyon Yap</button>
+            </div>
+            
+            <div class="vehicle">
+                <img src="resim/ultrasp.jpg" alt="Range Rover">
+                <h2>Ultra VIP Sprinter</h2>
+                <p>10 kişilik geniş araç</p>
+                <button class="reserve-btn"  onclick="window.location.href='ödeme4.html'">Rezervasyon Yap</button>
+            </div>
+        </section>
+    
+    </bodyy>
+
+                                              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="container">
+        <h2>Günübirlik Turlar</h2>
+        <div class="feature-content">
+            <div class="row">
+                <img src="resim/uludağ.jpg" onclick="window.location.href='uludağ.html'">
+                <h4 onclick="window.location.href='uludağ.html'">Bursa Uludağ Turları</h4>
+            </div>
+            <div class="row">
+                <img src="resim/kapadokya.jpg" onclick="window.location.href='kapadokya.html'">
+                <h4 onclick="window.location.href='kapadokya.html'">Kapadokya Turları</h4>
+            </div>
+            <div class="row">
+                <img src="resim/pamukkale.jpg" onclick="window.location.href='pamukkale.html'">
+                <h4  onclick="window.location.href='pamukkale.html'">Pamukkale Turları</h4>
+            </div>
+            <div class="row">
+                <img src="resim/sapanca.jpg" onclick="window.location.href='sapanca.html'">
+                <h4  onclick="window.location.href='sapanca.html'">Sapanca Turları</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Popüler Lokasyonlar</h2>
+        <div class="locations">
+            <div class="location">
+                <p><strong>İstanbul Airport (IST) → Kapalı Çarşı Transfer</strong></p>
+                <p class="price">30,00 $ Başlayan Fiyatlar</p>
+                <button class="reserve-btn" onclick="window.location.href='istanbul-kapalıç.html'">Rezervasyon Yap</button>
+            </div>
+            <div class="location">
+                <p><strong>Sabiha Gökçen Havalimanı (SAW) → İstanbul Havalimanı (IST) Transfer</strong></p>
+                <p class="price">58,00 $ Başlayan Fiyatlar</p>
+                <button class="reserve-btn" onclick="window.location.href='sabiha-istanbul.html'">Rezervasyon Yap</button>
+            </div>
+            <div class="location">
+                <p><strong>İstanbul Havalimanı (IST) → Sabiha Gökçen Havalimanı (SAW) Transfer</strong></p>
+                <p class="price">58,00 $ Başlayan Fiyatlar</p>
+                <button class="reserve-btn" onclick="window.location.href='istanbul-sabiha.html'">Rezervasyon Yap</button>
+            </div>
+            <div class="location">
+                <p><strong>İstanbul Havalimanı (IST) →  Beşiktaş Transfer</strong></p>
+                <p class="price">31,00 $ Başlayan Fiyatlar</p>
+                <button class="reserve-btn" onclick="window.location.href='istanbul-Beşiktaş.html'">Rezervasyon Yap</button>
+            </div>
+            <div class="location">
+                <p><strong>İstanbul Havalimanı (IST) →  İstinyepark Mall Transfer</strong></p>
+                <p class="price">32,00 $ Başlayan Fiyatlar</p>
+                <button class="reserve-btn" onclick="window.location.href='istanbul-istinye.html'">Rezervasyon Yap</button>
+            </div>
+            <div class="location">
+                <p><strong>İstanbul Havalimanı (IST) →  Şişli Transfer</strong></p>
+                <p class="price">32,00 $ Başlayan Fiyatlar</p>
+                <button class="reserve-btn" onclick="window.location.href='istanbul-Şişli.html'">Rezervasyon Yap</button>
+            </div>
+            <div class="location">
+                <p><strong>Sabiha Gökçen Havalimanı (SAW) →  Beşiktaş Transfer</strong></p>
+                <p class="price">35,00 $ Başlayan Fiyatlar</p>
+                <button class="reserve-btn" onclick="window.location.href='sabiha-Beşiktaş.html'">Rezervasyon Yap</button>
+            </div>
+            <div class="location">
+                <p><strong>Sabiha Gökçen Havalimanı (SAW)  →  Mall of İstanbul Transfer</strong></p>
+                <p class="price">40,00 $ Başlayan Fiyatlar</p>
+                <button class="reserve-btn" onclick="window.location.href='sabiha-Mall.html'">Rezervasyon Yap</button>
+            </div>
+
+            <!-- Yeni İstanbul turu eklemesi -->
+
+            <div class="istanbul-tour">
+              <img src="resim/istanbul.jpg" alt="İstanbul Turu">
+                <div class="text">
+                    <h3>İstanbul Turu</h3>
+                    <p>Tatilin tadını çıkardın mı? İstanbul, kendine hayran bırakan muhteşem yerleri ve tarihi dokusuyla seni bekliyor. İstanbul'un en özel noktalarını keşfetmek için hemen tura katıl!</p>
+                    <button class="reserve-btn" onclick="window.location.href='istanbul-turu.html'">Rezervasyon Yap</button>
+                </div>
+            </div>
+
+             <!-- Yeni İstanbul turu eklemesi -->
+             <div class="istanbul-tour">
+                <img src="resim/muğla.jpg" alt="İstanbul Turu">
+                <div class="text">
+                    <h3>Muğla Turu</h3>
+                    <p>Tatilin tadını çıkardın mı?Mavi yolculuğun vazgeçilmez rotası Muğla kıyıları misafirlerini bekliyor</p>
+                    <button class="reserve-btn" onclick="window.location.href='muğla-turu.html'">Rezervasyon Yap</button>
+                </div>
+            </div>
+           
+    </div>
+    <br><br>
+
+
+</section>
+<div class="araçlar">
+    <h2>Kiralık Araçlar</h2>
+    <div class="feature-content">
+        <div class="row">
+            <img src="resim/fiategea.jpg" onclick="window.location.href='arac1.html'">
+            <h4 onclick="window.location.href='arac1.html'">Fiat Egea</h4>
+            <button class="reserve-btn" onclick="window.location.href='kiralama.html'">Kirala</button>
+        </div>
+        <div class="row">
+            <img src="resim/rena.jpg" onclick="window.location.href='arac2.html'">
+            <h4 onclick="window.location.href='arac2.html'">Renault Clio</h4>
+            <button class="reserve-btn" onclick="window.location.href='kiralama1.html'">Kirala</button>
+        </div>
+        <div class="row">
+            <img src="resim/corol.jpg" onclick="window.location.href='arac3.html'">
+            <h4 onclick="window.location.href='arac3.html'">Toyota Corolla</h4>
+            <button class="reserve-btn" onclick="window.location.href='kiralama2.html'">Kirala</button>
+        </div>
+    </div>
+</div>
+
+
+<br><br>
+
+    
+<bodyyy>
+    <h2>İstanbul'da Yat Turu</h2>
+
+    <div class="ccontainer">
+        <a class="image-box">
+            <img src="resim/yat1.jpg" alt="Resim 1">
+            <div class="overlay">Yatta Doğum Günü</div>
+        </a>
+        <a class="image-box">
+            <img src="resim/yat2.jpg" alt="Resim 2">
+            <div class="overlay">Yatta Evlilik Teklifi</div>
+        </a>
+        <a  class="image-box">
+            <img src="resim/yat3 (2).jpg" alt="Resim 3">
+            <div class="overlay">Romantik Yat Turu</div>
+        </a>
+        <a  class="image-box">
+            <img src="resim/yat4.jpg" alt="Resim 4">
+            <div class="overlay">Aile Turu</div>
+        </a>
+        <a  class="image-box">
+            <img src="resim/yat5.jpg" alt="Resim 5">
+            <div class="overlay">Lüks Yat Turu</div>
+        </a>
+        <a  class="image-box">
+            <img src="resim/yat7.jpg" alt="Resim 6">
+            <div class="overlay">Boğazda Kahvaltı</div>
+        </a>
+        <a  class="image-box">
+            <img src="resim/yat8.jpg" alt="Resim 7">
+            <div class="overlay">Şirket Etkinlikleri</div>
+        </a>
+    </div>
+    <h2>Bilgi için İletişime geçin</h2>
+  
+    <!-- Alt kısımda WhatsApp ve Bize Ulaşın Butonları -->
+    <div class="contact-section">
+        <a href="https://wa.me/905354940385" target="_blank">
+            <img class="whatsapp-icon" src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+            WhatsApp ile Bize Ulaşın
+        </a>
+        <a href="tel:+90 5354940385" class="musterihizmet">
+            <div class="icon">
+                <i class="las la-headset"></i>
+            </div>
+            <div class="yazi">
+               İletişim </div>
+        </a>
+    </div>
+</bodyyy>
+
+
+
+     <!---footer section design-->
+     <section class="footer">
+        <div class="footer-box">
+            <h3>Hakkımızda</h3>
+            <a href="#"  onclick="window.location.href='buluşma.html'">Buluşma Noktamız</a>
+           
+            <a href="tel:+90 5354940385" class="musterihizmet">
+                <div class="icon">
+                    <i class="las la-headset"></i>
+                </div>
+                <div class="yazi">
+                   İletişim </div>
+            </a>
+        </div>
+
+
+        <div class="footer-box">
+            <h3>Servisler</h3>
+            <a href="#">Hikayemiz</a>
+            
+            
+        </div>
+
+
+
+   
+
+
+        <div class="footer-box">
+            <h3>Sosyal</h3>
+           <div class="social">
+            <a href="https://www.instagram.com/akaslanturizm/"><i class="ri-instagram-fill"></i></a>
+            <a href="https://wa.me/905354940385"><i class="ri-whatsapp-fill"></i></i></a>
+           </div>
+        </div>
+
+
+        
+     </section>
+
+
+
+    <!---footer section design-->
+
+
+
+    <div class="copyright">
+        <p>telif hakkı 2025 AkaslanTurizm</p>
+    </div>
+
+
+
+
+
+
+
+     <!---custom js file link-->
+     <script src="js/script.js"></script>
+
+
+
+
+
+     
+  
+</body>
+</html>
+
+
+
+

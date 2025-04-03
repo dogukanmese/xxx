@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yolcu Bilgileri</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6XFSBo5ZO2hi2f8BjDwjmsT8PeOVQTGU&libraries=places"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .trip-details, .passenger-info {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input, select, button {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .passenger-info.hidden {
+            display: none;
+        }
+
+        #priceContainer {
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+            color: #28a745;
+        }
+
+        #tripDetailsContainer {
+            margin-top: 20px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        #paymentInfo {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .passenger-info.hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .trip-details, .passenger-info {
+                width: 100%;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="trip-details">
+        <h3>Yolculuk Detayları</h3>
+        <label>Araç Tipi:</label>
+        <select id="vehicleType" onchange="calculatePrice()">
+            <option value="ECO Van">Ultra VIP</option>
+            <option value="Eco VIP">Eco VIP</option>
+            <option value="Ultra VIP">ECO Van</option>
+            <option value="Sprinter">Sprinter</option>
+            <option value="Ultra VIP Sprinter">Ultra VIP Sprinter</option>
+        </select>
+        <label>Nereden:</label>
+        <input type="text" id="from" placeholder="Başlangıç noktası" onchange="updateTripDetails()">
+        <label>Nereye:</label>
+        <input type="text" id="to" placeholder="Varış noktası" onchange="updateTripDetails()">
+        <label>Gidiş Tarihi:</label>
+        <input type="datetime-local" id="departureDate" onchange="updateTripDetails()">
+        <label>Gidiş-Dönüş:</label>
+        <select id="roundTrip" onchange="toggleReturnDate(); updateTripDetails()">
+            <option value="Hayır">Hayır</option>
+            <option value="Evet">Evet</option>
+        </select>
+        
+        <div id="returnDateContainer" style="display: none;">
+            <label>Dönüş Tarihi:</label>
+            <input type="datetime-local" id="returnDate" onchange="updateTripDetails()">
+        </div>
+
+        <label>Mesafe (KM):</label>
+        <input type="number" id="distance" readonly>
+
+        <label>Kişi Sayısı:</label>
+        <input type="number" id="passengers" value="1" min="1" onchange="updatePassengerFields()">
+
+        <button onclick="calculateDistance()">Hesapla</button>
+    </div>
+
+    <div class="passenger-info hidden" id="passengerInfoContainer">
+        <h3>Yolcu Bilgileri</h3>
+        
+        <!-- Yolcu bilgileri alanı -->
+        <div id="passengerContainer">
+            <div class="passenger">
+                <label for="fullName1">Ad Soyad:</label>
+                <input type="text" id="fullName1" placeholder="Ad Soyad" oninput="updateTripDetails()">
+            </div>
+        </div>
+
+        <label for="phone">Telefon Numarası:</label>
+        <input type="text" id="phone" placeholder="Telefon Numarası" oninput="updateTripDetails()">
+        <div id="paymentInfo">
+            <p>IBAN: <strong> TR84 0011 1000 0000 0150 0177 41</strong></p>
+            <p>Alıcı: <strong>Okan Akaslan</strong></p>
+        </div>
+        <button class="copy-btn" onclick="copyIBAN()">IBAN'ı Kopyala</button>
+
+        <div id="priceContainer"></div>
+
+        <div id="tripDetailsContainer"></div>
+
+        <!-- Tek Buton: Ödeme Tamamla ve Mail Gönder -->
+        <button onclick="completePaymentAndSendEmail()">Ödeme Tamamla ve Mail Gönder</button>
+    </div>
+
+    <script>
+        function initAutocomplete() {
+            let fromInput = document.getElementById("from");
+            let toInput = document.getElementById("to");
+            
+            // Google Maps Autocomplete işlevi ekleyelim
+            let autocompleteFrom = new google.maps.places.Autocomplete(fromInput);
+            let autocompleteTo = new google.maps.places.Autocomplete(toInput);
+
+            autocompleteFrom.addListener("place_changed", function() {
+                let place = autocompleteFrom.getPlace();
+                if (!place.geometry) {
+                    return;
+                }
+            });
+
+            autocompleteTo.addListener("place_changed", function() {
+                let place = autocompleteTo.getPlace();
+                if (!place.geometry) {
+                    return;
+                }
+            });
+        }
+
+        window.onload = function() {
+            initAutocomplete();  // sayfa yüklendiğinde autocomplete işlevini başlatalım
+        };
+
+        function toggleReturnDate() {
+            let roundTrip = document.getElementById("roundTrip").value;
+            let returnDateContainer = document.getElementById("returnDateContainer");
+            
+            if (roundTrip === "Evet") {
+                returnDateContainer.style.display = "block";
+            } else {
+                returnDateContainer.style.display = "none";
+            }
+        }
+
+        function updatePassengerFields() {
+            let passengerCount = document.getElementById("passengers").value;
+            let container = document.getElementById("passengerContainer");
+            container.innerHTML = "";  // Clear previous inputs
+
+            // Yolcu sayısına göre yeni alanları ekleyelim
+            for (let i = 1; i <= passengerCount; i++) {
+                let passengerDiv = document.createElement("div");
+                passengerDiv.classList.add("passenger");
+
+                passengerDiv.innerHTML = ` 
+                    <label for="fullName${i}">Ad Soyad ${i}:</label>
+                    <input type="text" id="fullName${i}" placeholder="Ad Soyad ${i}" oninput="updateTripDetails()">
+                `;
+                
+                container.appendChild(passengerDiv);
+            }
+        }
+
+        function calculateDistance() {
+            let from = document.getElementById("from").value;
+            let to = document.getElementById("to").value;
+
+            if (!from || !to) {
+                alert("Lütfen başlangıç ve varış noktalarını girin.");
+                return;
+            }
+
+            let service = new google.maps.DistanceMatrixService();
+            service.getDistanceMatrix(
+                {
+                    origins: [from],
+                    destinations: [to],
+                    travelMode: 'DRIVING',
+                    unitSystem: google.maps.UnitSystem.METRIC
+                },
+                function (response, status) {
+                    if (status == 'OK') {
+                        let distance = response.rows[0].elements[0].distance.value / 1000; // Mesafe km cinsinden
+                        document.getElementById("distance").value = distance;
+
+                        calculatePrice(distance); // Fiyatı hesapla
+                    } else {
+                        alert("Mesafe hesaplanamadı.");
+                    }
+                }
+            );
+
+            // Yolcu bilgilerini göster
+            document.getElementById("passengerInfoContainer").classList.remove("hidden");
+        }
+
+        function calculatePrice(distance) {
+            let vehicleType = document.getElementById("vehicleType").value;
+            let priceTL = 0;
+
+            // Araç tiplerine göre fiyatları tanımlıyoruz
+            switch (vehicleType) {
+                case "ECO Van":
+                    priceTL = distance * 30; // ECO Van için km başı 30 TL
+                    break;
+                case "Eco VIP":
+                    priceTL = distance * 37; // Eco VIP için km başı 37 TL
+                    break;
+                case "Ultra VIP":
+                    priceTL = distance * 42; // Ultra VIP için km başı 42 TL
+                    break;
+                case "Sprinter":
+                    priceTL = distance * 50; // Sprinter için km başı 50 TL
+                    break;
+                case "Ultra VIP Sprinter":
+                    priceTL = distance * 55; // Ultra VIP Sprinter için km başı 55 TL
+                    break;
+                default:
+                    break;
+            }
+
+            // TL, USD ve EUR'ya çevirme
+            let priceUSD = priceTL * 0.038; // TL'den USD'ye çevir
+            let priceEUR = priceTL * 0.041; // TL'den EUR'ya çevir
+
+            // Fiyatları ekranda göster
+            document.getElementById("priceContainer").innerHTML = ` 
+                <p>Toplam Fiyat: ${priceTL} TL</p>
+                <p>Toplam Fiyat: ${priceUSD.toFixed(2)} USD</p>
+                <p>Toplam Fiyat: ${priceEUR.toFixed(2)} EUR</p>
+            `;
+        }
+
+        function updateTripDetails() {
+            let from = document.getElementById("from").value;
+            let to = document.getElementById("to").value;
+            let departureDate = document.getElementById("departureDate").value;
+            let returnDate = document.getElementById("returnDate").value;
+            let roundTrip = document.getElementById("roundTrip").value;
+            let passengerCount = document.getElementById("passengers").value;
+
+            let tripDetails = `
+                Sefer Detayları
+               Araç Tipi: ${document.getElementById("vehicleType").value}
+                Nereden: ${from}
+                Nereye: ${to}
+                Gidiş Tarihi: ${departureDate}
+                ${roundTrip === "Evet" ? `Dönüş Tarihi: ${returnDate}` : ""}
+                Kişi Sayısı: ${passengerCount}
+            `;
+
+            document.getElementById("tripDetailsContainer").innerHTML = tripDetails;
+
+            // Yolcu Bilgileri
+            let passengerNames = [];
+            for (let i = 1; i <= passengerCount; i++) {
+                let fullName = document.getElementById(`fullName${i}`)?.value;
+                if (fullName) {
+                    passengerNames.push(fullName);
+                }
+            }
+
+            // Yolcu bilgilerini güncelle
+            let phoneNumber = document.getElementById("phone").value;
+
+            let emailBody = `
+                Yolcu Bilgileri:
+                Ad Soyad: ${passengerNames.join(', ')}
+                Telefon: ${phoneNumber}
+                
+                Sefer Detayları:
+                ${tripDetails}
+            `;
+
+            return emailBody;
+        }
+
+        function completePaymentAndSendEmail() {
+            // E-posta gönderme işlemi
+            let subject = "Yolculuk Detayları";
+            let body = updateTripDetails(); // Yolcu ve sefer bilgilerini al
+
+            window.location.href = `mailto:okanakaslan51@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            alert("Ödeme Tamamlandı ve E-posta Gönderildi!");
+        }
+    </script>
+</body>
+</html>

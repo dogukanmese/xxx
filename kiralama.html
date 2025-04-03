@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Araç Kiralama Ödeme</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Araç Kiralama Ödeme</h2>
+    <form id="rentalForm">
+        <label>Araç Seçin:</label>
+        <select id="car">
+            <option value="Fiat Egea">Fiat Egea</option>
+            <option value="Renault Clio">Renault Clio</option>
+            <option value="Toyota Corolla">Toyota Corolla</option>
+        </select>
+
+        <label>Ad Soyad:</label>
+        <input type="text" id="name" placeholder="Adınızı girin" required>
+
+        <label>Telefon Numarası:</label>
+        <input type="tel" id="phone" placeholder="05XX XXX XX XX" required>
+
+        <label>E-posta Adresi:</label>
+        <input type="email" id="email" placeholder="E-posta adresinizi girin" required>
+
+        <label>Kaç Gün Kiralayacaksınız?</label>
+        <input type="number" id="days" min="1" max="30" value="1" required>
+
+        <label>Kiralama Başlangıç Tarihi:</label>
+        <input type="date" id="startDate" required>
+
+        <label>Kiralama Bitiş Tarihi:</label>
+        <input type="date" id="endDate" required>
+
+        <label>Toplam Ücret (TL):</label>
+        <input type="text" id="totalPrice" readonly>
+
+        <label>Toplam Ücret ($ USD):</label>
+        <input type="text" id="totalPriceUSD" readonly>
+
+        <label>Toplam Ücret (€ EUR):</label>
+        <input type="text" id="totalPriceEUR" readonly>
+
+        <button type="button" id="showPaymentInfo">Ödemeyi Tamamla</button>
+    </form>
+
+    <div id="paymentInfo" class="hidden">
+        <h3>Ödeme Bilgileri</h3>
+        <p><strong>IBAN:</strong> TR84 0011 1000 0000 0150 0177 41</p>
+        <p><strong>Alıcı:</strong> Onur Akaslan</p>
+        <p><strong>Ödenecek Tutar (TL):</strong> <span id="finalAmount"></span></p>
+        <p><strong>Ödenecek Tutar ($ USD):</strong> <span id="finalAmountUSD"></span></p>
+        <p><strong>Ödenecek Tutar (€ EUR):</strong> <span id="finalAmountEUR"></span></p>
+        <p>Lütfen belirtilen IBAN numarasına toplam ücreti havale/EFT yapınız.</p>
+        <button id="confirmPayment">Ödemeyi Onayla ve Mail Gönder</button>
+    </div>
+</div>
+
+<script>
+    function calculatePrice(days) {
+        if (days <= 7) {
+            return days * 2000; // İlk 7 gün 2.000 TL
+        } else {
+            return (7 * 2000) + ((days - 7) * 1000); // 7 güne kadar 2.000 TL, sonrası 1.000 TL
+        }
+    }
+
+    function updatePrices() {
+        let days = parseInt(document.getElementById('days').value) || 1;
+        let totalPriceTL = calculatePrice(days);
+        let totalPriceUSD = (totalPriceTL / 38).toFixed(2); // 1 USD = 38 TL
+        let totalPriceEUR = (totalPriceTL / 42).toFixed(2); // 1 EUR = 42 TL
+
+        document.getElementById('totalPrice').value = totalPriceTL + " TL";
+        document.getElementById('totalPriceUSD').value = totalPriceUSD + " $";
+        document.getElementById('totalPriceEUR').value = totalPriceEUR + " €";
+    }
+
+    document.getElementById('days').addEventListener('input', updatePrices);
+
+    document.getElementById('showPaymentInfo').addEventListener('click', function() {
+        updatePrices();
+
+        let days = parseInt(document.getElementById('days').value) || 1;
+        let finalPriceTL = calculatePrice(days);
+        let finalPriceUSD = (finalPriceTL / 38).toFixed(2);
+        let finalPriceEUR = (finalPriceTL / 42).toFixed(2);
+
+        document.getElementById('finalAmount').innerText = finalPriceTL + " TL";
+        document.getElementById('finalAmountUSD').innerText = finalPriceUSD + " $";
+        document.getElementById('finalAmountEUR').innerText = finalPriceEUR + " €";
+        document.getElementById('paymentInfo').classList.remove('hidden');
+    });
+
+    document.getElementById('confirmPayment').addEventListener('click', function() {
+        let name = document.getElementById('name').value;
+        let email = document.getElementById('email').value;
+        let phone = document.getElementById('phone').value;
+        let car = document.getElementById('car').value;
+        let days = document.getElementById('days').value;
+        let totalPriceTL = document.getElementById('finalAmount').innerText;
+        let totalPriceUSD = document.getElementById('finalAmountUSD').innerText;
+        let totalPriceEUR = document.getElementById('finalAmountEUR').innerText;
+        let startDate = document.getElementById('startDate').value;
+        let endDate = document.getElementById('endDate').value;
+
+        if (!email) {
+            alert("Lütfen geçerli bir e-posta adresi girin!");
+            return;
+        }
+
+        let emailBody = 
+            `Kiraladığınız Araç: ${car}%0A` +
+            `Ad Soyad: ${name}%0A` +
+            `Telefon Numarası: ${phone}%0A` +
+            `Kiralama Süresi: ${days} gün%0A` +
+            `Kiralama Başlangıç Tarihi: ${startDate}%0A` +
+            `Kiralama Bitiş Tarihi: ${endDate}%0A` +
+            `Ödenen Tutar: ${totalPriceTL} (%0AUSD: ${totalPriceUSD}, EUR: ${totalPriceEUR})%0A`;
+
+        let mailtoLink = `mailto:okanakaslan51@icloud.com?subject=Araç Kiralama Ödeme Onayı&body=${emailBody}`;
+        window.location.href = mailtoLink;
+
+        alert("Ödeme işlemi onaylandı! Bilgileriniz e-posta adresinize gönderildi.");
+    });
+</script>
+
+</body>
+</html>

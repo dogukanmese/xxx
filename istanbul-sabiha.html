@@ -1,0 +1,306 @@
+<!DOCTYPE html><html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rezervasyon Detayları</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+        }
+        h2 {
+            color: #333;
+        }
+        .info {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            background: #ff6600;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #e65c00;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        *{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    list-style: none;
+    text-decoration: none;
+    border: none;
+    outline: none;
+    scroll-behavior: smooth;
+    font-family: 'Open Sans',sans-serif;
+    
+}
+
+
+
+:root{/* Genel Ayarlar */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        overflow-x: hidden; /* Yatay kaydırma engelleniyor */
+    }
+    
+
+    
+    /* İçerik Alanı */
+    .container {
+        flex-grow: 1; /* İçeriğin esnemesini sağlar */
+    }
+    
+    /* Footer Düzenlemesi */
+    footer {
+        background: #222;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        width: 100%;
+        position: relative;
+        bottom: 0;
+        margin-top: auto; /* Footer'ı alt kısma yerleştirir */
+    }
+    
+    
+    /* Footer'ın alt kısımdan doğru şekilde görünmesini sağlar */
+    footer {
+        position: relative;
+        margin-top: auto; /* Footer, sayfa altına itilir */
+    }
+    
+    --text-color:#000000;
+    --bg-color:#ffffff;
+    --main-color:#ffa343;   
+
+    --h1-font: 6rem;
+    --h2-font:3rem;
+    --p-font: 1rem;
+}
+body{
+    color: var(--text-color);
+    background: var(--bg-color);
+}
+header{
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    width: 100%;
+    background: transparent;
+    padding: 27px 17%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all .50s ease;
+
+}
+.btn:hover{
+    transform: translateX(10px);
+    border: 2px solid var(--text-color);
+    background: transparent;
+    color: var(--text-color);
+}
+header.sticky{
+    padding: 8px 10%;
+    background: transparent;
+    backdrop-filter: blur(35px);
+}
+.logo{
+    font-size: 25px;
+    color: var(--text-color);
+    font-weight: 700;
+}
+span{
+    color: var(--main-color);
+}
+.navbar{
+    display: flex;
+}
+.navbar a{
+    color: var(--text-color);
+    font-size: var(--p-font);
+    font-weight: 500;
+    margin: 15px 22px;
+    transition: all .50s ease;
+}
+.navbar a:hover{
+    color: var(--main-color);
+}
+.h-right{
+    display: flex;
+    align-items: center;
+}
+.h-right a:first-child{
+    color: var(--text-color);
+    font-size: var(--p-font);
+    margin-right: 20px;
+}
+.h-right a{
+    vertical-align: middle;
+    font-size: 20px;
+    color: var(--text-color);
+    margin-right: 18px;
+    margin-left: 5px;
+    transition: all .50s ease;
+}
+.h-right a:hover{
+    color: var(--main-color);
+    transform: translateY(-3px);
+}
+#menu-icon{
+    color: var(--text-color);
+    font-size: 30px;
+    cursor: pointer;
+    z-index: 10001;
+    display: none;
+}
+
+section{
+    padding: 70px 17px 60px;
+}
+.home{
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    background-image: linear-gradient(to left,rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+    url();
+
+    background-size: cover;
+    background-position: bottom center;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.home-text h5{
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    color: var(--main-color);
+}
+.home-text h1{
+    font-size: var(--h2-font);
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+.home-text p{
+    font-size: var(--p-font);
+    font-weight: 500;
+    line-height: 30px;
+    color: #ffffffab;
+    margin-bottom: 35px;
+}
+
+    </style>
+    <script>
+        function sendEmail() {
+            var passengerName = document.getElementById("passenger-name").value;
+            var phoneNumber = document.getElementById("phone-number").value;
+            var route = document.getElementById("route").textContent;
+            var price = document.getElementById("price").textContent;
+            var paymentInfo = "Ödeme Hesabı: IBAN TR84 0011 1000 0000 0150 0177 41";var emailBody = "Yolcu Bilgileri:%0D%0A" +
+                        "Ad Soyad: " + passengerName + "%0D%0A" +
+                        "Telefon: " + phoneNumber + "%0D%0A" +
+                        "Rota: " + route + "%0D%0A" +
+                        "Fiyat: " + price + "%0D%0A" +
+                        paymentInfo;
+        
+        window.location.href = "mailto:okanakaslan51@icloud.com?subject=Rezervasyon Bilgileri&body=" + emailBody;
+    }
+</script>
+
+</head>
+<body>
+
+
+        <!---header design-->
+        <header class="sticky">
+            <img src="resim/logo.png" height="90">
+    
+            <a href="#" class="logo"  onclick="window.location.href='index.html'">AKASLAN<span>TURİZM</span></a>
+    
+            <ul class="navbar">
+                <li><a href="#">Servisler</a></li>
+                
+                <li><a href="onclick="window.location.href='hakkımızda.html'">Hakkımızda</a></li>
+                <li><a href="#">İletişim</a></li>
+            </ul>
+    
+            <div class="h-right">
+                <a href="#">Bizi Takip Edin</a>
+                <a href="https://www.instagram.com/akaslanturizm/"><i class="ri-instagram-fill"></i></a>
+                <a href="https://whatsapp/05354940385"><i class="ri-whatsapp-fill"></i></i></a>
+                <div class="bx bx-menu" id="menu-icon"></div>
+    
+            </div>
+        </header>
+
+
+
+
+
+
+
+
+
+
+<br><br><br><br><br><br><br><br><br>
+
+    <div class="container">
+        <h2>Rezervasyon Detayları</h2>
+        <div class="info">
+            <strong>Fiyat:</strong> <span id="price">58,00 $</span>
+        </div>
+        <div class="info">
+            <strong>Nereden - Nereye:</strong> <span id="route">İstanbul Havalimanı (IST) → Sabiha Gökçen Havalimanı (SAW)</span>
+        </div>
+        <div class="info">
+            <strong>Yolcu Detayları:</strong>
+            <label for="passenger-name">Ad Soyad:</label>
+            <input type="text" id="passenger-name" placeholder="Adınızı giriniz" required><label for="phone-number">Telefon Numarası:</label>
+        <input type="text" id="phone-number" placeholder="Telefon numaranızı giriniz" required>
+    </div>
+    <div class="info">
+        <strong>Ödeme Bilgisi:</strong>
+        <p>Ödeme Hesabı: <strong>IBAN TR84 0011 1000 0000 0150 0177 41</strong></p>
+        <br> <p>Alıcı: <strong>Okan Akaslan</strong></p>
+    </div>
+    <button class="btn" onclick="sendEmail()">Ödemeyi Tamamla ve Mail Gönder</button>
+</div>
+
+</body>
+</html>

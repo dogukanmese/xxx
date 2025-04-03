@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Araç Seçimi</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6XFSBo5ZO2hi2f8BjDwjmsT8PeOVQTGU&libraries=places"></script>
+    <style>
+       body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px; /* Yazı tipi boyutunu küçültüyoruz */
+}
+
+.container {
+    max-width: 800px;
+    flex: 1;
+}
+
+.vehicle {
+    background: white;
+    padding: 7px;
+    margin: 8px 0;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Öğeleri dikey sıralıyoruz */
+    align-items: flex-start; /* Sol hizalama */
+}
+
+.vehicle img {
+    width: 120px; /* Resmin boyutunu küçültüyoruz */
+    border-radius: 5px;
+    margin-right: 10px; /* Resimle yazı arasındaki mesafeyi kısaltıyoruz */
+}
+
+.vehicle-info {
+    flex: 1;
+}
+
+.price {
+    font-size: 16px; /* Fiyat yazı tipini küçültüyoruz */
+    font-weight: bold;
+    color: #28a745;
+}
+.reserve-btn {
+    background: #007bff;
+    color: white;
+    padding: 6px 12px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 12px;
+    margin-top: auto; /* Butonu en altta tutuyoruz */
+}
+.trip-details {
+    width: 300px; /* Genişlik sabit kalacak */
+    background: #fff;
+    padding: 20px; /* İç boşluğu sıfırlıyoruz */
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-left: 10%; /* Sayfanın sol kısmına biraz kaydırıyoruz */
+    display: flex;
+    flex-direction: column; /* İçeriği dikey sıralıyoruz */
+    justify-content: space-between; /* İçeriği en üst ve en alt arasına dağıtıyoruz */
+    height: 100%; /* Yüksekliği tam dolduruyoruz */
+}
+
+.trip-details h3 {
+    background: red;
+    color: white;
+    padding: 8px; /* Başlık alanındaki yazıyı biraz küçültüyoruz */
+    border-radius: 5px;
+    font-size: 16px; /* Başlık yazı tipini küçültüyoruz */
+}
+
+.trip-details input, .trip-details select {
+    width: 100%;
+    padding: 6px; /* Giriş kutularını biraz küçültüyoruz */
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px; /* Giriş kutularındaki yazıyı küçültüyoruz */
+}
+
+.trip-details button {
+    width: 100%;
+    background: #007bff;
+    color: white;
+    padding: 8px; /* Butonun boyutunu küçültüyoruz */
+    border: none;
+    border-radius: 5px;
+    font-size: 14px; /* Buton yazı tipini küçültüyoruz */
+    cursor: pointer;
+}
+
+#map {
+    width: 100%;
+    height: 250px; /* Harita yüksekliğini küçültüyoruz */
+    margin-top: 10px;
+    border-radius: 8px;
+    display: none;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Eco Van -->
+        <div class="vehicle" id="ecoVan">
+            <img src="resim/ecovan.jpg" alt="ECO Van">
+            <div class="vehicle-info">
+                <h3>ECO Van (Maksimum 9 kişi)</h3>
+                <p class="price" id="ecoPrice">Fiyat hesaplanıyor...</p>
+                <p class="trip-info" id="ecoTripInfo"></p>
+                <a href="odeme.html" class="reserve-btn" onclick="setReservationData('ecoVan')">Rezervasyon Yap</a>
+            </div>
+        </div>
+
+        <!-- Eco VIP -->
+        <div class="vehicle" id="ecoVip">
+            <img src="resim/ecovip.jpg" alt="Eco VIP">
+            <div class="vehicle-info">
+                <h3>Eco VIP (Maksimum 9 kişi)</h3>
+                <p class="price" id="ecoVipPrice">Fiyat hesaplanıyor...</p>
+                <p class="trip-info" id="ecoVipTripInfo"></p>
+                <a href="odeme.html" class="reserve-btn" onclick="setReservationData('ecoVip')">Rezervasyon Yap</a>
+            </div>
+        </div>
+
+        <!-- Ultra VIP -->
+        <div class="vehicle" id="ultraVip">
+            <img src="resim/ultra.jpg" alt="Ultra VIP">
+            <div class="vehicle-info">
+                <h3>Ultra VIP (Maksimum 9 kişi)</h3>
+                <p class="price" id="ultraVipPrice">Fiyat hesaplanıyor...</p>
+                <p class="trip-info" id="ultraVipTripInfo"></p>
+                <a href="odeme.html" class="reserve-btn" onclick="setReservationData('ultraVip')">Rezervasyon Yap</a>
+            </div>
+        </div>
+
+        <!-- Sprinter -->
+        <div class="vehicle" id="sprinter">
+            <img src="resim/sprın.jpg" alt="Sprinter">
+            <div class="vehicle-info">
+                <h3>Sprinter (Maksimum 16 kişi)</h3>
+                <p class="price" id="sprinterPrice">Fiyat hesaplanıyor...</p>
+                <p class="trip-info" id="sprinterTripInfo"></p>
+                <a href="odeme.html" class="reserve-btn" onclick="setReservationData('sprinter')">Rezervasyon Yap</a>
+            </div>
+        </div>
+
+        <!-- Ultra VIP Sprinter -->
+        <div class="vehicle" id="ultraVipSprinter">
+            <img src="resim/ultrasp.jpg" alt="Ultra VIP Sprinter">
+            <div class="vehicle-info">
+                <h3>Ultra VIP Sprinter (Maksimum 10 kişi)</h3>
+                <p class="price" id="ultraVipSprinterPrice">Fiyat hesaplanıyor...</p>
+                <p class="trip-info" id="ultraVipSprinterTripInfo"></p>
+                <a href="odeme.html" class="reserve-btn" onclick="setReservationData('ultraVipSprinter')">Rezervasyon Yap</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="trip-details">
+        <h3>Yolculuk Detayları</h3>
+        <label>Nereden:</label>
+        <input type="text" id="from" placeholder="Başlangıç noktası">
+        <label>Nereye:</label>
+        <input type="text" id="to" placeholder="Varış noktası">
+        <label>Gidiş Tarihi:</label>
+        <input type="datetime-local" id="departureDate" onchange="updateTripDetails()">
+        <label>Gidiş-Dönüş:</label>
+        <select id="roundTrip" onchange="toggleReturnDate(); updateTripDetails()">
+            <option value="Hayır">Hayır</option>
+            <option value="Evet">Evet</option>
+        </select>
+        
+
+        <div id="returnDateContainer" style="display: none;">
+            <label>Dönüş Tarihi:</label>
+            <input type="datetime-local" id="returnDate" onchange="updateTripDetails()">
+        </div>
+
+        <label>Mesafe (KM):</label>
+        <input type="number" id="distance" readonly>
+
+        <label>Kişi Sayısı:</label>
+        <input type="number" id="passengers" value="1" min="1" onchange="updateTripDetails()">
+
+        <div id="map"></div>
+
+        <button onclick="calculateDistance()">Hesapla</button>
+    </div>
+
+    <script>
+
+let selectedVehicle = '';
+    let tripDetails = {
+        from: '',
+        to: '',
+        departureDate: '',
+        returnDate: '',
+        distance: 0,
+        passengers: 1,
+        vehicle: '',
+        price: 0
+    };
+
+    function setReservationData(vehicle) {
+        selectedVehicle = vehicle;
+        let departureDate = document.getElementById("departureDate").value;
+        let returnDate = document.getElementById("returnDate").value;
+        let distance = document.getElementById("distance").value;
+        let passengers = document.getElementById("passengers").value;
+        let from = document.getElementById("from").value;
+        let to = document.getElementById("to").value;
+
+        // Veriyi tripDetails nesnesine kaydediyoruz
+        tripDetails = {
+            from: from,
+            to: to,
+            departureDate: departureDate,
+            returnDate: returnDate,
+            distance: distance,
+            passengers: passengers,
+            vehicle: vehicle,
+            price: calculatePrice(vehicle, distance)
+        };
+
+        // Veriyi localStorage'a kaydediyoruz
+        localStorage.setItem('tripDetails', JSON.stringify(tripDetails));
+    }
+
+    function calculatePrice(vehicle, distance) {
+        let pricePerKm = {
+            ecoVan: 30,
+            ecoVip: 37,
+            ultraVip: 42,
+            sprinter: 50,
+            ultraVipSprinter: 55
+        };
+        return distance * pricePerKm[vehicle];
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function initMap() {
+            let map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 39.92077, lng: 32.85411 }, // Ankara merkez koordinatları
+                zoom: 6
+            });
+        }
+
+        function initAutocomplete() {
+            let fromInput = document.getElementById("from");
+            let toInput = document.getElementById("to");
+            new google.maps.places.Autocomplete(fromInput);
+            new google.maps.places.Autocomplete(toInput);
+        }
+
+        function toggleReturnDate() {
+            let roundTrip = document.getElementById("roundTrip").value;
+            let returnDateContainer = document.getElementById("returnDateContainer");
+            returnDateContainer.style.display = roundTrip === "Evet" ? "block" : "none";
+        }
+
+        function updateTripDetails() {
+            let departureDate = document.getElementById("departureDate").value;
+            let returnDate = document.getElementById("returnDate").value;
+            let passengers = document.getElementById("passengers").value;
+            let roundTrip = document.getElementById("roundTrip").value;
+
+            let tripInfo = `Gidiş Tarihi: ${departureDate}, Kişi Sayısı: ${passengers}`;
+            if (roundTrip === "Evet" && returnDate) {
+                tripInfo += `, Dönüş Tarihi: ${returnDate}`;
+            }
+
+            document.getElementById("ecoTripInfo").textContent = tripInfo;
+            document.getElementById("ecoVipTripInfo").textContent = tripInfo;
+            document.getElementById("ultraVipTripInfo").textContent = tripInfo;
+            document.getElementById("sprinterTripInfo").textContent = tripInfo;
+            document.getElementById("ultraVipSprinterTripInfo").textContent = tripInfo;
+        }
+
+        function calculateDistance() {
+            let from = document.getElementById("from").value;
+            let to = document.getElementById("to").value;
+            let service = new google.maps.DistanceMatrixService();
+
+            service.getDistanceMatrix({
+                origins: [from],
+                destinations: [to],
+                travelMode: 'DRIVING',
+            }, function(response, status) {
+                if (status === 'OK') {
+                    let distance = response.rows[0].elements[0].distance.value / 1000; // KM cinsinden
+                    document.getElementById("distance").value = distance;
+                    updatePrice(distance);
+                }
+            });
+        }
+
+
+        function updatePrice(distance) {
+            let priceEcoVanTL = distance * 30;
+            let priceEcoVipTL = distance * 37;
+            let priceUltraVipTL = distance * 42;
+            let priceSprinterTL = distance * 50;
+            let priceUltraVipSprinterTL = distance * 55;
+
+            let priceEuro = priceEcoVanTL / 41; // 1 EUR = 41 TL
+            let priceUSD = priceEcoVanTL / 38; // 1 USD = 38 TL
+
+            document.getElementById("ecoPrice").textContent =
+                priceEcoVanTL.toFixed(2) + " TL / " +
+                (priceEcoVanTL / 41).toFixed(2) + " EUR / " +
+                (priceEcoVanTL / 38).toFixed(2) + " USD";
+
+            document.getElementById("ecoVipPrice").textContent =
+                priceEcoVipTL.toFixed(2) + " TL / " +
+                (priceEcoVipTL / 41).toFixed(2) + " EUR / " +
+                (priceEcoVipTL / 38).toFixed(2) + " USD";
+
+            document.getElementById("ultraVipPrice").textContent =
+                priceUltraVipTL.toFixed(2) + " TL / " +
+                (priceUltraVipTL / 41).toFixed(2) + " EUR / " +
+                (priceUltraVipTL / 38).toFixed(2) + " USD";
+
+            document.getElementById("sprinterPrice").textContent =
+                priceSprinterTL.toFixed(2) + " TL / " +
+                (priceSprinterTL / 41).toFixed(2) + " EUR / " +
+                (priceSprinterTL / 38).toFixed(2) + " USD";
+
+            document.getElementById("ultraVipSprinterPrice").textContent =
+                priceUltraVipSprinterTL.toFixed(2) + " TL / " +
+                (priceUltraVipSprinterTL / 41).toFixed(2) + " EUR / " +
+                (priceUltraVipSprinterTL / 38).toFixed(2) + " USD";
+        }
+
+        google.maps.event.addDomListener(window, 'load', function() {
+            initMap();
+            initAutocomplete();
+        });
+    </script>
+</body>
+</html>

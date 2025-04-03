@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buluşma Noktamız</title>
+    <style>
+        /* Genel Stil */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            padding: 40px 0;
+            font-size: 36px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .havalimanı-bul, .sabiha-bul {
+            width: 100%;
+            max-width: 450px; /* Kutuları küçülttük */
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .havalimanı-bul:hover, .sabiha-bul:hover {
+            transform: translateY(-10px);
+        }
+
+        .havalimanı-bul img, .sabiha-bul img {
+            width: 100%;
+            height: auto;
+            border-bottom: 5px solid #eee;
+        }
+
+        .text {
+            padding: 15px; /* Padding'i küçülttük */
+        }
+
+        .text h3 {
+            color: #333;
+            font-size: 24px; /* Başlık boyutunu biraz küçülttük */
+            margin-bottom: 10px;
+        }
+
+        .text p {
+            color: #555;
+            font-size: 15px; /* Yazı boyutunu küçülttük */
+            line-height: 1.6;
+        }
+
+        .text p strong {
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* Mobil Uyumluluk */
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 28px;
+            }
+
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .havalimanı-bul, .sabiha-bul {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Buluşma Noktamız</h2>
+    <div class="container">
+        <!-- İstanbul Havalimanı -->
+        <div class="havalimanı-bul">
+            <img src="resim/bul1.jpg" alt="İstanbul Havalimanı">
+            <div class="text">
+                <h3>İstanbul Havalimanı Buluşma Noktamız (IST)</h3>
+                <p>İstanbul Havalimanı'na vardığınızda, gümrük işlemlerinizi tamamlayın ve bagajınızı alın, havalimanı binasından çıkmak için lütfen Kapı 14'e ilerleyin. Çıkıştan çıkınca solunuzda G55 işaretini göreceksiniz. Lütfen adınızı ve rezervasyon kodunuzu aracınıza kadar size yardımcı olacak iş arkadaşlarımıza bildirin. Havalimanındaki operasyonel nedenlerden dolayı, aracınız sizi en az 5 dakika ve en fazla 15 dakika içinde alacaktır.</p>
+            </div>
+        </div>
+
+        <!-- Sabiha Gökçen Havalimanı -->
+        <div class="sabiha-bul">
+            <img src="resim/bul2.jpg" alt="Sabiha Gökçen Havalimanı">
+            <div class="text">
+                <h3>Sabiha Gökçen Havalimanı Buluşma Noktamız (SAW)</h3>
+                <p>Sabiha Gökçen Havalimanı'na vardığınızda, gümrük işlemlerinizi tamamlayıp bagajınızı aldıktan sonra, havalimanı binasından çıkış için Kapıya ilerleyin. Kapıdan çıktığınızda kapının karşısında Simit Sarayı'nı göreceksiniz, G55 olan karşılama panomuz Simit Sarayı'nın yanında bulunmaktadır. Lütfen adınızı ve aracınıza ait rezervasyon kodunuzu size yardımcı olacak meslektaşlarımıza bildirin. Havalimanındaki operasyonel nedenlerden dolayı aracınız sizi minimum 5, maksimum 15 dakikada alacaktır.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
